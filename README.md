@@ -8,7 +8,7 @@ This project is a complete C++ implementation of the Huffman Coding algorithm. I
 
 The system supports both encryption (compression) and decryption (reconstruction) using a persistent key file, ensuring data can be recovered across different program executions.
 
-
+To view the UML, click this link https://usman-irshad1.github.io/Huffman-File-Compressor/
 
 **Core Features**
 

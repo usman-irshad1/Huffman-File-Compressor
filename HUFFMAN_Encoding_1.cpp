@@ -238,6 +238,21 @@ public:
             cout << "Failure";
         }
     }
+
+    void deleteTree(encryption* node) {
+        if (node == nullptr) { return;}
+        deleteTree(node->left);
+        deleteTree(node->right);
+        delete node;
+    
+    }
+
+
+    ~priority_list() {
+        if (this->empty()) { return; }
+		deleteTree(this->front());
+        this->clear();
+    }
 };
 int main()
 {

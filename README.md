@@ -1,160 +1,76 @@
-**Huffman Compression Engine**
+# Educational Huffman Coding & Tree Reconstruction Demo (C++)
 
+[![Language: C++17](https://img.shields.io/badge/Language-C%2B%2B17-blue?style=flat-square)]()
+[![Docs: Doxygen](https://img.shields.io/badge/Docs-Doxygen%20Live-2ea44f?style=flat-square)](https://usman-irshad1.github.io/Huffman-File-Compressor/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](LICENSE)
 
+An educational C++ implementation of **Huffman Coding** (lossless prefix-code data representation) demonstrating character frequency analysis, priority-list binary tree construction, persistent code-table serialization, and exact text reconstruction.
 
-This project is a complete C++ implementation of the Huffman Coding algorithm. It provides a full pipeline for compressing and decompressing text files by analyzing character frequency and generating an optimal prefix-based binary tree.
+> **Important Technical Scope Note:**  
+> 1. **Bitstring Representation vs. Bit-Packed Binary Compression:** To make the prefix codes easy to inspect in plain text, this educational implementation writes the encoded output to [`Encrypted_file.txt`](Encrypted_file.txt) as human-readable ASCII `'0'` and `'1'` characters rather than packing 8 bits into each binary byte (`uint8_t`). Consequently, it demonstrates the **Huffman tree construction and prefix-decoding algorithms**, not physical disk-space reduction.  
+> 2. **Terminology Note (`encryption` / `Encrypted_file.txt`):** Several struct and filenames in the source code (`struct encryption`, `Key_for_encryption.txt`, `Encrypted_file.txt`, `Decrypted_file.txt`) use the word *"encryption"* colloquially from the original coursework prompt. Mathematically, **Huffman coding is a lossless entropy encoding (compression) algorithm, not cryptographic encryption.**
 
+- **Live UML & Class Documentation**: [Doxygen Documentation](https://usman-irshad1.github.io/Huffman-File-Compressor/)
 
+---
 
-The system supports both encryption (compression) and decryption (reconstruction) using a persistent key file, ensuring data can be recovered across different program executions.
+## Core Algorithmic Workflow
 
-To view the UML, click this link https://usman-irshad1.github.io/Huffman-File-Compressor/
+1. **Character Frequency Analysis**: Scans [`OriginalFile.txt`](OriginalFile.txt) (preserving spaces, punctuation, and newline characters) and counts character frequencies in a sorted `priority_list`.
+2. **Huffman Binary Tree Construction**: Repeatedly merges the two lowest-frequency nodes into a parent node (`freq = left->freq + right->freq`) until a single root remains, assigning shorter prefix paths to frequent characters.
+3. **Prefix Code Table Generation (`Key_for_encryption.txt`)**: Traverses the binary tree (`Left -> '0'`, `Right -> '1'`) and serializes the character-to-bitstring mapping to [`Key_for_encryption.txt`](Key_for_encryption.txt).
+4. **Encoding (`Encrypted_file.txt`)**: Maps each character of `OriginalFile.txt` to its variable-length prefix code string in [`Encrypted_file.txt`](Encrypted_file.txt).
+5. **Tree Reconstruction & Decoding (`Decrypted_file.txt`)**: Rebuilds the Huffman tree purely from the serialized prefix table (`Key_for_encryption.txt`) and traverses the bitstring to losslessly recover [`Decrypted_file.txt`](Decrypted_file.txt).
 
-**Core Features**
+---
 
+## Repository File Structure
 
+```text
+Huffman-File-Compressor/
+├── HUFFMAN_Encoding_1.cpp          # Complete Huffman tree, encoding, and decoding implementation
+├── HUFFMAN_Encoding_1.slnx         # Visual Studio 2022 solution file
+├── HUFFMAN_Encoding_1.vcxproj      # Visual Studio C++ project file
+├── OriginalFile.txt                # Sample input text file to encode
+├── Key_for_encryption.txt          # Generated character-to-prefix-code lookup table
+├── Encrypted_file.txt              # Generated ASCII '0'/'1' bitstring representation
+├── Decrypted_file.txt              # Reconstructed output text file (matches OriginalFile.txt)
+├── docs/                           # Generated Doxygen HTML & UML class diagrams
+└── LICENSE                         # MIT License
+```
 
-* **Frequency Analysis**
-* Dynamically calculates the occurrence of each character in the input file to determine optimal encoding weights.
-* **Huffman Tree Construction**
-* Builds a binary tree using a priority-based list, where characters with lower frequency are placed deeper, and frequent characters get shorter codes.
-* **Full Formatting Support**
-* Preserves spaces, special characters, and newline formatting, ensuring the decrypted output matches the original file exactly
-* **Persistent Key Storage**
-* Stores the generated Huffman codes in a key file, allowing reconstruction of the tree without needing the original input.
-* **Tree Reconstruction**
-* Rebuilds the Huffman tree from the saved key file using pointer-based traversal logic.
-* **Memory Management**
-* Implements recursive deletion of tree nodes to prevent memory leaks.
+---
 
+## Prerequisites & Build / Run Instructions
 
+### Option 1: Command-Line Compilation (`g++` / `clang++` / `cl`)
+The project uses only the C++ Standard Library (`<iostream>`, `<fstream>`, `<string>`, `<list>`) with zero external dependencies:
 
-**How It Works**
+```bash
+# 1. Clone the repository
+git clone https://github.com/usman-irshad1/Huffman-File-Compressor.git
+cd Huffman-File-Compressor
 
+# 2. Compile with C++17
+g++ -std=c++17 -O2 HUFFMAN_Encoding_1.cpp -o huffman_demo
 
+# 3. Run (reads OriginalFile.txt and generates Key_for_encryption.txt, Encrypted_file.txt, and Decrypted_file.txt)
+./huffman_demo
 
-**1. Input Processing**
+# 4. Verify lossless reconstruction against the original input
+diff -s OriginalFile.txt Decrypted_file.txt
+```
 
-The program reads the entire text file, including newline characters.
+### Option 2: Visual Studio 2022 (Windows)
+1. Open `HUFFMAN_Encoding_1.slnx` (or `HUFFMAN_Encoding_1.vcxproj`) in **Visual Studio 2022**.
+2. Select **`Release | x64`** (or `Debug | x64`) and press **`Ctrl + F5`** to build and execute.
 
+---
 
+## Roadmap for True Binary Compression
 
-**2. Frequency Calculation**
-
-Each character is counted and stored in a custom list structure.
-
-
-
-**3. Tree Construction**
-
-The two least frequent nodes are repeatedly combined to form a parent node until a single root remains.
-
-
-
-**4. Encoding**
-
-Each character is assigned a unique binary code based on its path in the tree:
-
-
-
-Left → 0
-
-Right → 1
-
-
-
-**5. Key Generation**
-
-The character-to-code mapping is saved in a file (Key\_for\_encryption.txt).
-
-
-
-**6. Encryption**
-
-The original text is converted into a string of 0s and 1s and stored in Encrypted\_file.txt.
-
-
-
-**7. Reconstruction**
-
-The tree is rebuilt from the key file using the stored codes.
-
-
-
-**8. Decryption**
-
-The encoded bitstream is traversed through the reconstructed tree to recover the original text, saved in Decrypted\_file.txt.
-
-
-
-**Technical Implementation**
-
-
-
-* Language
-* C++
-
-
-
-**Core Data Structures**
-
-
-
-* Custom tree node (encryption)
-* Inherited STL list as a priority structure
-* Pointer-based binary tree
-
-
-
-**Key Techniques**
-
-
-
-1. Recursion (tree traversal, deletion, encoding)
-2. File handling using ifstream and ofstream
-3. Operator overloading (for frequency increment)
-4. Custom sorting for priority handling
-
-
-
-**Project Workflow** 
-
-
-
-1. Read and encode original file
-2. Build Huffman tree
-3. Save key file
-4. Rebuild tree from key
-5. Save encrypted file
-6. Decrypt file using rebuilt tree
-
-
-
-**Current Limitations**
-
-
-
-* Encoded data is stored as strings ("0" and "1") instead of actual bits
-* This does not reduce physical file size significantly
-* Uses list instead of a more efficient priority\_queue
-
-
-
-**Future Improvements**
-
-
-
-1. **Bit Packing**
-Convert binary strings into actual bits for real compression and reduced file size.
-
-2. **Performance Optimization**
-Replace list-based priority handling with a priority\_queue (min-heap).
-
-3. **User Interface**
-Add a command-line menu for file selection and operation control.
-
-4. **Error Handling**
-   Improve robustness for missing files and invalid inputs.
+- **Bit-Packing I/O Buffer**: Pack 8 ASCII `'0'`/`'1'` decisions into single bytes (`std::bitset<8>` / bitwise shift buffer with padding header) to achieve physical file-size reduction ($\approx 40\text{--}55\%$ on English text).
+- **Min-Heap Priority Queue**: Replace the `std::list`-based `priority_list` with `std::priority_queue` for $O(K \log K)$ tree construction over alphabet size $K$.
 
 ---
 

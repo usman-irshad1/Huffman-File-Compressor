@@ -154,6 +154,10 @@ Replace list-based priority handling with a priority\_queue (min-heap).
 Add a command-line menu for file selection and operation control.
 
 4. **Error Handling**
+   Improve robustness for missing files and invalid inputs.
 
-&#x20;  Improve robustness for missing files and invalid inputs.
+---
 
+## License
+
+This project is licensed under the [MIT License](LICENSE).
